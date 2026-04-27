@@ -1,125 +1,151 @@
-
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <style>
+:root{
+  --sand:#f5f0eb;
+  --sand-mid:#ede6dd;
+  --sand-dark:#d8cfc4;
+  --ember:#c94a1a;
+  --ember-soft:#f0784a;
+  --ember-pale:#fdeee8;
+  --blue:#2563a8;
+  --blue-pale:#e8f0fa;
+  --amber:#b97a10;
+  --amber-pale:#fdf4e3;
+  --ink:#1a1410;
+  --ink-mid:#4a3f35;
+  --ink-light:#8a7a6e;
+  --ink-faint:#c4b8ae;
+  --white:#fffcf9;
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
-body,div,td,th,input,button,span,p,h1,h2,h3,label{font-family:'Inter',sans-serif}
+body,div,td,th,input,button,span,p,h1,h2,h3,label{font-family:'DM Sans',sans-serif}
 
-.outer{background:#fff;padding:36px 24px 64px;display:flex;justify-content:center}
-.page{width:100%;max-width:80%}
+.outer{background:var(--sand);min-height:100vh;padding:40px 24px 72px;display:flex;justify-content:center}
+.page{width:100%;max-width:820px}
 
-.header{margin-bottom:28px;padding-bottom:22px;border-bottom:2px solid #f0f0f0}
-.header-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
-.header h1{font-size:22px;font-weight:700;color:#111;letter-spacing:-.4px;line-height:1.2}
-.header h1 span{color:#e05c2a}
-.header p{font-size:13px;color:#888;margin-top:5px}
-.location-pill{display:inline-flex;align-items:center;gap:5px;background:#f4f4f4;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:500;color:#555}
-.location-dot{width:7px;height:7px;border-radius:50%;background:#e05c2a}
+/* ── header ── */
+.header{margin-bottom:32px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px}
+.header h1{font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.5px;line-height:1.15}
+.header h1 span{color:var(--ember)}
+.header p{font-size:13px;color:var(--ink-light);margin-top:6px;line-height:1.6;max-width:560px}
+.location-pill{display:inline-flex;align-items:center;gap:6px;background:var(--white);border:1.5px solid var(--sand-dark);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;color:var(--ink-mid);letter-spacing:.2px;white-space:nowrap}
+.location-dot{width:7px;height:7px;border-radius:50%;background:var(--ember);flex-shrink:0}
 
-.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:24px}
-.stat{background:#fafafa;border:1.5px solid #f0f0f0;border-radius:12px;padding:14px 14px 12px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#f0f0f0;border-radius:12px 12px 0 0}
-.stat.hot::before{background:#e05c2a}
-.stat.cool::before{background:#3b82f6}
-.stat.warn::before{background:#f59e0b}
-.stat.green::before{background:#10b981}
-.stat-label{font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
-.stat-val{font-size:24px;font-weight:700;color:#111;line-height:1}
-.stat-sub{font-size:10px;color:#bbb;margin-top:4px}
+/* ── stat cards ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:24px}
+.stat{background:var(--white);border:1.5px solid var(--sand-dark);border-radius:14px;padding:16px 16px 13px;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 14px 14px}
+.stat.hot::after{background:var(--ember)}
+.stat.cool::after{background:var(--blue)}
+.stat.warn::after{background:var(--amber)}
+.stat.green::after{background:#2d8c5e}
+.stat:not(.hot):not(.cool):not(.warn):not(.green)::after{background:var(--sand-dark)}
+.stat-label{font-size:10px;color:var(--ink-light);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px}
+.stat-val{font-size:26px;font-weight:700;color:var(--ink);line-height:1}
+.stat-sub{font-size:10px;color:var(--ink-faint);margin-top:5px}
 
-.source-note{font-size:12px;color:#777;background:#fafafa;border:1px solid #eee;border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:20px;line-height:1.6}
-.source-note strong{color:#3b82f6;font-weight:600}
+/* ── source note ── */
+.source-note{font-size:12px;color:var(--ink-mid);background:var(--blue-pale);border:1px solid #c5d9f2;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;margin-bottom:22px;line-height:1.7}
+.source-note strong{color:var(--blue);font-weight:600}
 
-.fetch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-.btn-fetch{padding:9px 20px;background:#111;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:-.1px;transition:background .15s}
-.btn-fetch:hover{background:#333}
-.btn-fetch:disabled{background:#ccc;cursor:not-allowed}
-.btn-exp{padding:9px 16px;background:#fff;color:#444;border:1.5px solid #e5e5e5;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
-.btn-exp:hover{border-color:#aaa;color:#111}
-.btn-exp:disabled{opacity:.35;cursor:not-allowed}
+/* ── fetch controls ── */
+.fetch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.btn-fetch{padding:10px 22px;background:var(--ember);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.1px;transition:background .15s,transform .1s;box-shadow:0 2px 8px rgba(201,74,26,.25)}
+.btn-fetch:hover{background:#b03e12;transform:translateY(-1px)}
+.btn-fetch:active{transform:translateY(0)}
+.btn-fetch:disabled{background:var(--sand-dark);box-shadow:none;cursor:not-allowed;transform:none}
+.btn-exp{padding:10px 18px;background:var(--white);color:var(--ink-mid);border:1.5px solid var(--sand-dark);border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-exp:hover{border-color:var(--ink-faint);color:var(--ink)}
+.btn-exp:disabled{opacity:.4;cursor:not-allowed}
 
-.prog-wrap{height:4px;background:#f0f0f0;border-radius:4px;margin-bottom:8px;overflow:hidden}
-.prog-fill{height:100%;background:#111;border-radius:4px;transition:width .2s;width:0%}
-.status-txt{font-size:12px;color:#999;margin-bottom:18px;min-height:16px}
+.prog-wrap{height:5px;background:var(--sand-mid);border-radius:5px;margin-bottom:9px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--ember),var(--ember-soft));border-radius:5px;transition:width .25s;width:0%}
+.status-txt{font-size:12px;color:var(--ink-light);margin-bottom:20px;min-height:16px}
 
-.tabs{display:flex;gap:0;border-bottom:2px solid #f0f0f0;margin-bottom:24px}
-.tab{padding:10px 18px;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;letter-spacing:-.1px}
-.tab:hover{color:#333}
-.tab.active{color:#111;border-bottom-color:#111;font-weight:600}
+/* ── tabs ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--sand-dark);margin-bottom:26px}
+.tab{padding:11px 20px;font-size:13px;font-weight:500;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s}
+.tab:hover{color:var(--ink-mid)}
+.tab.active{color:var(--ink);border-bottom-color:var(--ember);font-weight:700}
 
 .pane{display:none}.pane.active{display:block}
 
+/* ── search & sort ── */
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
 .search-wrap{position:relative;flex:1;min-width:180px}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:#bbb;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
-.search-wrap input{width:100%;padding:8px 10px 8px 32px;font-size:13px;font-family:'Inter',sans-serif;border:1.5px solid #eee;border-radius:9px;outline:none;color:#111;background:#fff}
-.search-wrap input::placeholder{color:#ccc}
-.search-wrap input:focus{border-color:#aaa;box-shadow:0 0 0 3px #f5f5f5}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--ink-faint);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.search-wrap input{width:100%;padding:9px 11px 9px 34px;font-size:13px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--sand-dark);border-radius:10px;outline:none;color:var(--ink);background:var(--white)}
+.search-wrap input::placeholder{color:var(--ink-faint)}
+.search-wrap input:focus{border-color:var(--ink-light);box-shadow:0 0 0 3px var(--sand-mid)}
 
 .filter-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-.chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #eee;background:#fff;color:#666;transition:all .15s;font-family:'Inter',sans-serif}
-.chip:hover{border-color:#ccc;color:#111}
-.chip.active{background:#111;color:#fff;border-color:#111}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--sand-dark);background:var(--white);color:var(--ink-mid);transition:all .15s;font-family:'DM Sans',sans-serif}
+.chip:hover{border-color:var(--ink-faint);color:var(--ink)}
+.chip.active{background:var(--ember);color:#fff;border-color:var(--ember)}
 
 .sort-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.sort-label{font-size:12px;color:#bbb;font-weight:500}
-.sort-btn{padding:5px 11px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #eee;background:#fff;color:#666;font-family:'Inter',sans-serif;transition:all .15s}
-.sort-btn:hover{border-color:#ccc;color:#111}
-.sort-btn.active{background:#f5f5f5;border-color:#ccc;color:#111;font-weight:600}
+.sort-label{font-size:12px;color:var(--ink-faint);font-weight:500}
+.sort-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--sand-dark);background:var(--white);color:var(--ink-mid);font-family:'DM Sans',sans-serif;transition:all .15s}
+.sort-btn:hover{border-color:var(--ink-faint);color:var(--ink)}
+.sort-btn.active{background:var(--sand-mid);border-color:var(--sand-dark);color:var(--ink);font-weight:600}
 
-.result-count{font-size:12px;color:#bbb;margin-bottom:10px;letter-spacing:.1px}
+.result-count{font-size:12px;color:var(--ink-faint);margin-bottom:10px;letter-spacing:.1px}
 
-.tbl-wrap{overflow-x:auto;border:1.5px solid #f0f0f0;border-radius:14px;overflow:hidden}
+/* ── table ── */
+.tbl-wrap{overflow-x:auto;border:1.5px solid var(--sand-dark);border-radius:14px;background:var(--white);overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
-thead tr{background:#fafafa}
-th{text-align:left;padding:11px 14px;color:#aaa;font-weight:600;font-size:10px;letter-spacing:.5px;border-bottom:1.5px solid #f0f0f0;white-space:nowrap;text-transform:uppercase}
-td{padding:11px 14px;border-bottom:1px solid #f7f7f7;color:#222;vertical-align:middle;line-height:1.4}
+thead tr{background:var(--sand)}
+th{text-align:left;padding:12px 15px;color:var(--ink-light);font-weight:600;font-size:10px;letter-spacing:.6px;border-bottom:1.5px solid var(--sand-dark);white-space:nowrap;text-transform:uppercase}
+td{padding:12px 15px;border-bottom:1px solid var(--sand);color:var(--ink);vertical-align:middle;line-height:1.4}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#fdfcfb}
+tr:hover td{background:#fdf8f4}
 
-.temp-high{color:#e05c2a;font-weight:700;font-size:14px}
-.temp-low{color:#3b82f6;font-weight:600;font-size:13px}
-.peak-val{color:#bbb;font-size:11px}
-.pend{color:#ddd;font-style:italic;font-size:12px}
-.err{color:#f87171;font-size:11px}
-.date-cell{font-weight:600;color:#333;white-space:nowrap;font-size:12px}
-.time-cell{color:#bbb;white-space:nowrap;font-size:12px}
+.temp-high{color:var(--ember);font-weight:700;font-size:14px}
+.temp-low{color:var(--blue);font-weight:600;font-size:13px}
+.peak-val{color:var(--ink-faint);font-size:11px}
+.pend{color:var(--ink-faint);font-style:italic;font-size:12px}
+.err{color:#e05555;font-size:11px}
+.date-cell{font-weight:600;color:var(--ink-mid);white-space:nowrap;font-size:12px}
+.time-cell{color:var(--ink-faint);white-space:nowrap;font-size:12px}
 
-.inc-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.1px}
-.inc-medical{background:#fff1f0;color:#b91c1c}
-.inc-lost{background:#fffbeb;color:#92400e}
-.inc-injury{background:#f0fdf4;color:#166534}
-.inc-multiple{background:#f5f3ff;color:#5b21b6}
-.inc-other{background:#f4f4f4;color:#555}
+.inc-badge{display:inline-block;padding:4px 10px;border-radius:7px;font-size:11px;font-weight:600;letter-spacing:.1px}
+.inc-medical{background:#fde8e8;color:#8b1c1c}
+.inc-lost{background:var(--amber-pale);color:#7a4a08}
+.inc-injury{background:#e6f5ed;color:#145c30}
+.inc-multiple{background:#ede8fa;color:#4a1d8c}
+.inc-other{background:var(--sand-mid);color:var(--ink-mid)}
 
-.no-results{text-align:center;padding:40px;color:#ccc;font-size:13px}
+.no-results{text-align:center;padding:44px;color:var(--ink-faint);font-size:13px}
 
-.chart-section{margin-bottom:36px}
-.chart-header{margin-bottom:12px}
-.chart-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;letter-spacing:-.2px}
-.chart-sub{font-size:12px;color:#999;line-height:1.6;max-width:560px}
-.chart-box{position:relative;width:100%}
+/* ── charts ── */
+.chart-section{margin-bottom:38px}
+.chart-header{margin-bottom:14px}
+.chart-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:5px;letter-spacing:-.2px}
+.chart-sub{font-size:12px;color:var(--ink-light);line-height:1.65;max-width:580px}
+.chart-box{position:relative;width:100%;background:var(--white);border:1.5px solid var(--sand-dark);border-radius:14px;padding:18px}
 
-.insight-card{background:#fff9f7;border:1.5px solid #fdddd6;border-radius:10px;padding:12px 16px;margin-top:14px;font-size:13px;color:#7c3520;line-height:1.7}
-.insight-card strong{color:#c1440e;font-weight:700}
-.insight-card.blue{background:#f0f7ff;border-color:#bfdbfe;color:#1e3a5f}
-.insight-card.blue strong{color:#1d4ed8}
+.insight-card{background:var(--ember-pale);border:1.5px solid #f5c5ae;border-radius:12px;padding:13px 17px;margin-top:14px;font-size:13px;color:#6b2d0e;line-height:1.75}
+.insight-card strong{color:var(--ember);font-weight:700}
+.insight-card.blue{background:var(--blue-pale);border-color:#bed3ee;color:#1a3560}
+.insight-card.blue strong{color:var(--blue)}
 
-.threshold-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:#999}
+.threshold-row{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--ink-light)}
 .threshold-line-sample{width:28px;height:0;border-top:2px dashed #ef4444}
 
-.divider{height:1.5px;background:#f5f5f5;margin:32px 0}
+.divider{height:1.5px;background:var(--sand-mid);margin:36px 0}
 
-.pending-note{font-size:13px;color:#bbb;background:#fafafa;border:1.5px solid #f0f0f0;border-radius:12px;padding:32px;text-align:center;line-height:1.7}
-.pending-note strong{color:#888;display:block;font-size:15px;margin-bottom:4px}
+.pending-note{font-size:13px;color:var(--ink-faint);background:var(--white);border:1.5px solid var(--sand-dark);border-radius:14px;padding:36px;text-align:center;line-height:1.75}
+.pending-note strong{color:var(--ink-mid);display:block;font-size:15px;margin-bottom:5px}
 </style>
 
 <div class="outer">
 <div class="page">
 
-  <div class="header">
+  <div class="header" style="padding-bottom:24px;border-bottom:1.5px solid var(--sand-dark);margin-bottom:28px">
     <div class="header-top">
       <h1>Stebbins Cold Canyon<br><span>Rescue Weather Log</span></h1>
       <span class="location-pill"><span class="location-dot"></span>Lake Berryessa, CA</span>
@@ -145,7 +171,7 @@ tr:hover td{background:#fdfcfb}
     <button class="btn-exp" id="exportBtn" onclick="exportCSV()" disabled>Export CSV</button>
   </div>
   <div class="prog-wrap"><div class="prog-fill" id="bar"></div></div>
-  <div class="status-txt" id="statusTxt">Ready. Hit "Fetch weather data" to load temperatures for all pre-imported events.</div>
+  <div class="status-txt" id="statusTxt">Ready. Hit "Fetch weather data" to load temperatures for all 51 events.</div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('table')">Data table</button>
@@ -166,7 +192,7 @@ tr:hover td{background:#fdfcfb}
       </div>
     </div>
     <div class="filter-chips" id="chipZone"></div>
-    <div class="result-count" id="resultCount">Showing all events</div>
+    <div class="result-count" id="resultCount">Showing all 51 events</div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
@@ -186,16 +212,16 @@ tr:hover td{background:#fdfcfb}
   <div class="pane" id="pane-insights">
     <div id="insights-pending" class="pending-note">
       <strong>No weather data yet</strong>
-      Fetch temperatures first and then come back. The charts will populate automatically once data is loaded.
+      Fetch temperatures first and then come back here. The charts will populate automatically once data is loaded.
     </div>
     <div id="insights-content" style="display:none">
 
       <div class="chart-section">
         <div class="chart-header">
           <div class="chart-title">When rescues happen vs. how hot it was</div>
-          <div class="chart-sub">Each dot is one rescue. The x-axis is the hour the call came in, the y-axis is how hot it got that day. The red dashed line is 95°F, a common threshold for dangerous heat conditions outdoors.</div>
+          <div class="chart-sub">Each dot is one rescue call. The x-axis is the hour the call came in, the y-axis is how hot it got that day. The red dashed line is 95°F, a common threshold for dangerous heat conditions outdoors.</div>
         </div>
-        <div class="chart-box" style="height:320px"><canvas id="scatterChart" role="img" aria-label="Scatter plot of rescue hour versus daily high temperature"></canvas></div>
+        <div class="chart-box"><div style="height:300px;position:relative"><canvas id="scatterChart" role="img" aria-label="Scatter plot of rescue hour versus daily high temperature"></canvas></div></div>
         <div class="threshold-row"><span class="threshold-line-sample"></span> 95°F danger threshold</div>
         <div class="insight-card" id="scatter-insight"></div>
       </div>
@@ -205,9 +231,9 @@ tr:hover td{background:#fdfcfb}
       <div class="chart-section">
         <div class="chart-header">
           <div class="chart-title">Rescues by month</div>
-          <div class="chart-sub">Total rescue calls per calendar month across all years. The shaded zone covers June through September.</div>
+          <div class="chart-sub">Total rescue calls per calendar month across all years. The shaded zone covers June through September. This is where the data gets uncomfortable.</div>
         </div>
-        <div class="chart-box" style="height:260px"><canvas id="monthChart" role="img" aria-label="Bar chart of rescues by month"></canvas></div>
+        <div class="chart-box"><div style="height:240px;position:relative"><canvas id="monthChart" role="img" aria-label="Bar chart of rescues by month"></canvas></div></div>
         <div class="insight-card blue" id="month-insight"></div>
       </div>
 
@@ -218,7 +244,7 @@ tr:hover td{background:#fdfcfb}
           <div class="chart-title">Temperature bands on rescue days</div>
           <div class="chart-sub">How many rescues happened when it hit each temperature range. Orange bars are days at or above 95°F.</div>
         </div>
-        <div class="chart-box" style="height:240px"><canvas id="histChart" role="img" aria-label="Histogram of daily high temperatures on rescue days"></canvas></div>
+        <div class="chart-box"><div style="height:220px;position:relative"><canvas id="histChart" role="img" aria-label="Histogram of daily high temperatures on rescue days"></canvas></div></div>
         <div class="insight-card" id="hist-insight"></div>
       </div>
 
@@ -398,12 +424,12 @@ function buildCharts(){
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},boxWidth:10,padding:14,color:'#666'}},
-        tooltip:{callbacks:{label(ctx){const p=ctx.raw;const ampm=p.x>=12?'PM':'AM';const h=p.x>12?p.x-12:p.x===0?12:p.x;return[`${p.d} at ${h}:00 ${ampm}`,`High: ${p.y}°F`,p.inc]}},bodyFont:{family:'Inter',size:11},titleDisplay:false}
+        legend:{display:true,position:'top',labels:{font:{family:'DM Sans',size:11},boxWidth:10,padding:14,color:'#666'}},
+        tooltip:{callbacks:{label(ctx){const p=ctx.raw;const ampm=p.x>=12?'PM':'AM';const h=p.x>12?p.x-12:p.x===0?12:p.x;return[`${p.d} at ${h}:00 ${ampm}`,`High: ${p.y}°F`,p.inc]}},bodyFont:{family:'DM Sans',size:11},titleDisplay:false}
       },
       scales:{
-        x:{title:{display:true,text:'Hour rescue was called',font:{family:'Inter',size:11},color:'#aaa'},min:6,max:22,ticks:{stepSize:2,callback:v=>{const ampm=v>=12?'PM':'AM';const h=v>12?v-12:v===0?12:v;return`${h}${ampm}`},font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}},
-        y:{title:{display:true,text:'Daily high temp (°F)',font:{family:'Inter',size:11},color:'#aaa'},min:40,max:120,ticks:{callback:v=>v+'°',font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}
+        x:{title:{display:true,text:'Hour rescue was called',font:{family:'DM Sans',size:11},color:'#aaa'},min:6,max:22,ticks:{stepSize:2,callback:v=>{const ampm=v>=12?'PM':'AM';const h=v>12?v-12:v===0?12:v;return`${h}${ampm}`},font:{family:'DM Sans',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}},
+        y:{title:{display:true,text:'Daily high temp (°F)',font:{family:'DM Sans',size:11},color:'#aaa'},min:40,max:120,ticks:{callback:v=>v+'°',font:{family:'DM Sans',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}
       }
     },
     plugins:[{id:'tl',afterDraw(chart){const{ctx,chartArea,scales}=chart;const y=scales.y.getPixelForValue(THRESHOLD);ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#ef4444';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(chartArea.left,y);ctx.lineTo(chartArea.right,y);ctx.stroke();ctx.restore()}}]
@@ -423,14 +449,14 @@ function buildCharts(){
     data:{labels:MONTH_NAMES,datasets:[{label:'Rescues',data:mc,backgroundColor:mc.map((_,i)=>i>=5&&i<=8?'rgba(224,92,42,0.85)':i>=3&&i<=4?'rgba(251,191,36,0.65)':'rgba(190,210,240,0.7)'),borderRadius:6,borderSkipped:false}]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'Inter',size:11}}},
-      scales:{x:{ticks:{font:{family:'Inter',size:11},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'DM Sans',size:11}}},
+      scales:{x:{ticks:{font:{family:'DM Sans',size:11},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'DM Sans',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
     },
     plugins:[{id:'shade',afterDraw(chart){const{ctx,chartArea,scales}=chart;ctx.save();ctx.fillStyle='rgba(224,92,42,0.05)';const x1=scales.x.getPixelForValue(4.5);const x2=scales.x.getPixelForValue(8.5);ctx.fillRect(x1,chartArea.top,x2-x1,chartArea.bottom-chartArea.top);ctx.restore()}}]
   });
 
   document.getElementById('month-insight').innerHTML=
-    `<strong>${summerCount} out of ${rows.length} total rescues</strong> (${Math.round(summerCount/rows.length*100)}%) happened in June, July, August, or September.`;
+    `<strong>${summerCount} out of ${rows.length} total rescues</strong> (${Math.round(summerCount/rows.length*100)}%) happened in June, July, August, or September. That is not a coincidence.`;
 
   const bands=[{l:'Under 60°',min:0,max:60},{l:'60 to 69°',min:60,max:70},{l:'70 to 79°',min:70,max:80},{l:'80 to 89°',min:80,max:90},{l:'90 to 94°',min:90,max:95},{l:'95 to 99°',min:95,max:100},{l:'100 to 109°',min:100,max:110},{l:'110° or above',min:110,max:999}];
   const hc=bands.map(b=>done.filter(r=>r.high>=b.min&&r.high<b.max).length);
@@ -440,14 +466,14 @@ function buildCharts(){
     data:{labels:bands.map(b=>b.l),datasets:[{label:'Rescues',data:hc,backgroundColor:bands.map(b=>b.min>=THRESHOLD?'rgba(224,92,42,0.85)':'rgba(190,210,240,0.7)'),borderRadius:6,borderSkipped:false}]},
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'Inter',size:11}}},
-      scales:{x:{ticks:{font:{family:'Inter',size:10},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'DM Sans',size:11}}},
+      scales:{x:{ticks:{font:{family:'DM Sans',size:10},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'DM Sans',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
     }
   });
 
   const aboveHist=hc.slice(5).reduce((a,b)=>a+b,0);
   document.getElementById('hist-insight').innerHTML=
-    `<strong>${aboveHist} out of ${done.length} rescues</strong> happened on days that reached 95°F or hotter.`;
+    `<strong>${aboveHist} out of ${done.length} rescues</strong> happened on days that reached 95°F or hotter. The orange bars tell the story pretty clearly.`;
 }
 
 async function fetchWeather(row){
