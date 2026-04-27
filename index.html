@@ -145,7 +145,7 @@ tr:hover td{background:#fdfcfb}
     <button class="btn-exp" id="exportBtn" onclick="exportCSV()" disabled>Export CSV</button>
   </div>
   <div class="prog-wrap"><div class="prog-fill" id="bar"></div></div>
-  <div class="status-txt" id="statusTxt">Ready. Hit "Fetch weather data" to load temperatures for all 51 events.</div>
+  <div class="status-txt" id="statusTxt">Ready. Hit "Fetch weather data" to load temperatures for all pre-imported events.</div>
 
   <div class="tabs">
     <button class="tab active" onclick="switchTab('table')">Data table</button>
@@ -166,7 +166,7 @@ tr:hover td{background:#fdfcfb}
       </div>
     </div>
     <div class="filter-chips" id="chipZone"></div>
-    <div class="result-count" id="resultCount">Showing all 51 events</div>
+    <div class="result-count" id="resultCount">Showing all events</div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
@@ -186,14 +186,14 @@ tr:hover td{background:#fdfcfb}
   <div class="pane" id="pane-insights">
     <div id="insights-pending" class="pending-note">
       <strong>No weather data yet</strong>
-      Fetch temperatures first and then come back here. The charts will populate automatically once data is loaded.
+      Fetch temperatures first and then come back. The charts will populate automatically once data is loaded.
     </div>
     <div id="insights-content" style="display:none">
 
       <div class="chart-section">
         <div class="chart-header">
           <div class="chart-title">When rescues happen vs. how hot it was</div>
-          <div class="chart-sub">Each dot is one rescue call. The x-axis is the hour the call came in, the y-axis is how hot it got that day. The red dashed line is 95°F, a common threshold for dangerous heat conditions outdoors.</div>
+          <div class="chart-sub">Each dot is one rescue. The x-axis is the hour the call came in, the y-axis is how hot it got that day. The red dashed line is 95°F, a common threshold for dangerous heat conditions outdoors.</div>
         </div>
         <div class="chart-box" style="height:320px"><canvas id="scatterChart" role="img" aria-label="Scatter plot of rescue hour versus daily high temperature"></canvas></div>
         <div class="threshold-row"><span class="threshold-line-sample"></span> 95°F danger threshold</div>
@@ -205,7 +205,7 @@ tr:hover td{background:#fdfcfb}
       <div class="chart-section">
         <div class="chart-header">
           <div class="chart-title">Rescues by month</div>
-          <div class="chart-sub">Total rescue calls per calendar month across all years. The shaded zone covers June through September. This is where the data gets uncomfortable.</div>
+          <div class="chart-sub">Total rescue calls per calendar month across all years. The shaded zone covers June through September.</div>
         </div>
         <div class="chart-box" style="height:260px"><canvas id="monthChart" role="img" aria-label="Bar chart of rescues by month"></canvas></div>
         <div class="insight-card blue" id="month-insight"></div>
@@ -430,7 +430,7 @@ function buildCharts(){
   });
 
   document.getElementById('month-insight').innerHTML=
-    `<strong>${summerCount} out of ${rows.length} total rescues</strong> (${Math.round(summerCount/rows.length*100)}%) happened in June, July, August, or September. That is not a coincidence.`;
+    `<strong>${summerCount} out of ${rows.length} total rescues</strong> (${Math.round(summerCount/rows.length*100)}%) happened in June, July, August, or September.`;
 
   const bands=[{l:'Under 60°',min:0,max:60},{l:'60 to 69°',min:60,max:70},{l:'70 to 79°',min:70,max:80},{l:'80 to 89°',min:80,max:90},{l:'90 to 94°',min:90,max:95},{l:'95 to 99°',min:95,max:100},{l:'100 to 109°',min:100,max:110},{l:'110° or above',min:110,max:999}];
   const hc=bands.map(b=>done.filter(r=>r.high>=b.min&&r.high<b.max).length);
@@ -447,7 +447,7 @@ function buildCharts(){
 
   const aboveHist=hc.slice(5).reduce((a,b)=>a+b,0);
   document.getElementById('hist-insight').innerHTML=
-    `<strong>${aboveHist} out of ${done.length} rescues</strong> happened on days that reached 95°F or hotter. The orange bars tell the story pretty clearly.`;
+    `<strong>${aboveHist} out of ${done.length} rescues</strong> happened on days that reached 95°F or hotter.`;
 }
 
 async function fetchWeather(row){
