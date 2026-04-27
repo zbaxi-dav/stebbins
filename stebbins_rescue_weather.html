@@ -1,0 +1,500 @@
+
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body,div,td,th,input,button,span,p,h1,h2,h3,label{font-family:'Inter',sans-serif}
+
+.outer{background:#fff;padding:36px 24px 64px;display:flex;justify-content:center}
+.page{width:100%;max-width:80%}
+
+.header{margin-bottom:28px;padding-bottom:22px;border-bottom:2px solid #f0f0f0}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px}
+.header h1{font-size:22px;font-weight:700;color:#111;letter-spacing:-.4px;line-height:1.2}
+.header h1 span{color:#e05c2a}
+.header p{font-size:13px;color:#888;margin-top:5px}
+.location-pill{display:inline-flex;align-items:center;gap:5px;background:#f4f4f4;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:500;color:#555}
+.location-dot{width:7px;height:7px;border-radius:50%;background:#e05c2a}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:24px}
+.stat{background:#fafafa;border:1.5px solid #f0f0f0;border-radius:12px;padding:14px 14px 12px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:#f0f0f0;border-radius:12px 12px 0 0}
+.stat.hot::before{background:#e05c2a}
+.stat.cool::before{background:#3b82f6}
+.stat.warn::before{background:#f59e0b}
+.stat.green::before{background:#10b981}
+.stat-label{font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.stat-val{font-size:24px;font-weight:700;color:#111;line-height:1}
+.stat-sub{font-size:10px;color:#bbb;margin-top:4px}
+
+.source-note{font-size:12px;color:#777;background:#fafafa;border:1px solid #eee;border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:20px;line-height:1.6}
+.source-note strong{color:#3b82f6;font-weight:600}
+
+.fetch-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.btn-fetch{padding:9px 20px;background:#111;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:-.1px;transition:background .15s}
+.btn-fetch:hover{background:#333}
+.btn-fetch:disabled{background:#ccc;cursor:not-allowed}
+.btn-exp{padding:9px 16px;background:#fff;color:#444;border:1.5px solid #e5e5e5;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn-exp:hover{border-color:#aaa;color:#111}
+.btn-exp:disabled{opacity:.35;cursor:not-allowed}
+
+.prog-wrap{height:4px;background:#f0f0f0;border-radius:4px;margin-bottom:8px;overflow:hidden}
+.prog-fill{height:100%;background:#111;border-radius:4px;transition:width .2s;width:0%}
+.status-txt{font-size:12px;color:#999;margin-bottom:18px;min-height:16px}
+
+.tabs{display:flex;gap:0;border-bottom:2px solid #f0f0f0;margin-bottom:24px}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-left:none;border-right:none;border-top:none;transition:all .15s;letter-spacing:-.1px}
+.tab:hover{color:#333}
+.tab.active{color:#111;border-bottom-color:#111;font-weight:600}
+
+.pane{display:none}.pane.active{display:block}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:#bbb;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.search-wrap input{width:100%;padding:8px 10px 8px 32px;font-size:13px;font-family:'Inter',sans-serif;border:1.5px solid #eee;border-radius:9px;outline:none;color:#111;background:#fff}
+.search-wrap input::placeholder{color:#ccc}
+.search-wrap input:focus{border-color:#aaa;box-shadow:0 0 0 3px #f5f5f5}
+
+.filter-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #eee;background:#fff;color:#666;transition:all .15s;font-family:'Inter',sans-serif}
+.chip:hover{border-color:#ccc;color:#111}
+.chip.active{background:#111;color:#fff;border-color:#111}
+
+.sort-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.sort-label{font-size:12px;color:#bbb;font-weight:500}
+.sort-btn{padding:5px 11px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #eee;background:#fff;color:#666;font-family:'Inter',sans-serif;transition:all .15s}
+.sort-btn:hover{border-color:#ccc;color:#111}
+.sort-btn.active{background:#f5f5f5;border-color:#ccc;color:#111;font-weight:600}
+
+.result-count{font-size:12px;color:#bbb;margin-bottom:10px;letter-spacing:.1px}
+
+.tbl-wrap{overflow-x:auto;border:1.5px solid #f0f0f0;border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+thead tr{background:#fafafa}
+th{text-align:left;padding:11px 14px;color:#aaa;font-weight:600;font-size:10px;letter-spacing:.5px;border-bottom:1.5px solid #f0f0f0;white-space:nowrap;text-transform:uppercase}
+td{padding:11px 14px;border-bottom:1px solid #f7f7f7;color:#222;vertical-align:middle;line-height:1.4}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fdfcfb}
+
+.temp-high{color:#e05c2a;font-weight:700;font-size:14px}
+.temp-low{color:#3b82f6;font-weight:600;font-size:13px}
+.peak-val{color:#bbb;font-size:11px}
+.pend{color:#ddd;font-style:italic;font-size:12px}
+.err{color:#f87171;font-size:11px}
+.date-cell{font-weight:600;color:#333;white-space:nowrap;font-size:12px}
+.time-cell{color:#bbb;white-space:nowrap;font-size:12px}
+
+.inc-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.1px}
+.inc-medical{background:#fff1f0;color:#b91c1c}
+.inc-lost{background:#fffbeb;color:#92400e}
+.inc-injury{background:#f0fdf4;color:#166534}
+.inc-multiple{background:#f5f3ff;color:#5b21b6}
+.inc-other{background:#f4f4f4;color:#555}
+
+.no-results{text-align:center;padding:40px;color:#ccc;font-size:13px}
+
+.chart-section{margin-bottom:36px}
+.chart-header{margin-bottom:12px}
+.chart-title{font-size:15px;font-weight:700;color:#111;margin-bottom:4px;letter-spacing:-.2px}
+.chart-sub{font-size:12px;color:#999;line-height:1.6;max-width:560px}
+.chart-box{position:relative;width:100%}
+
+.insight-card{background:#fff9f7;border:1.5px solid #fdddd6;border-radius:10px;padding:12px 16px;margin-top:14px;font-size:13px;color:#7c3520;line-height:1.7}
+.insight-card strong{color:#c1440e;font-weight:700}
+.insight-card.blue{background:#f0f7ff;border-color:#bfdbfe;color:#1e3a5f}
+.insight-card.blue strong{color:#1d4ed8}
+
+.threshold-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:#999}
+.threshold-line-sample{width:28px;height:0;border-top:2px dashed #ef4444}
+
+.divider{height:1.5px;background:#f5f5f5;margin:32px 0}
+
+.pending-note{font-size:13px;color:#bbb;background:#fafafa;border:1.5px solid #f0f0f0;border-radius:12px;padding:32px;text-align:center;line-height:1.7}
+.pending-note strong{color:#888;display:block;font-size:15px;margin-bottom:4px}
+</style>
+
+<div class="outer">
+<div class="page">
+
+  <div class="header">
+    <div class="header-top">
+      <h1>Stebbins Cold Canyon<br><span>Rescue Weather Log</span></h1>
+      <span class="location-pill"><span class="location-dot"></span>Lake Berryessa, CA</span>
+    </div>
+    <p>Incident data from public Twitter/Facebook posts, 2017 to present. Weather pulled from Open-Meteo historical archive.</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat hot"><div class="stat-label">Total events</div><div class="stat-val" id="s-total">51</div><div class="stat-sub">since 2017</div></div>
+    <div class="stat hot"><div class="stat-label">Avg high temp</div><div class="stat-val" id="s-avghigh">--</div><div class="stat-sub">on rescue days</div></div>
+    <div class="stat hot"><div class="stat-label">Max temp recorded</div><div class="stat-val" id="s-maxhigh">--</div><div class="stat-sub">on a rescue day</div></div>
+    <div class="stat warn"><div class="stat-label">Above 95°F</div><div class="stat-val" id="s-above95">--</div><div class="stat-sub">of loaded events</div></div>
+    <div class="stat cool"><div class="stat-label">Avg low temp</div><div class="stat-val" id="s-avglow">--</div><div class="stat-sub">on rescue days</div></div>
+    <div class="stat"><div class="stat-label">Showing</div><div class="stat-val" id="s-showing">51</div><div class="stat-sub">filtered events</div></div>
+  </div>
+
+  <div class="source-note">
+    Weather from <strong>Open-Meteo</strong> historical archive. Coordinates 38.52N 122.11W match the Stebbins Cold Canyon trailhead area.
+  </div>
+
+  <div class="fetch-row">
+    <button class="btn-fetch" id="fetchBtn" onclick="startFetch()">Fetch weather data</button>
+    <button class="btn-exp" id="exportBtn" onclick="exportCSV()" disabled>Export CSV</button>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="bar"></div></div>
+  <div class="status-txt" id="statusTxt">Ready. Hit "Fetch weather data" to load temperatures for all 51 events.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('table')">Data table</button>
+    <button class="tab" id="tab-insights" onclick="switchTab('insights')">Insights</button>
+  </div>
+
+  <div class="pane active" id="pane-table">
+    <div class="controls">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchBox" placeholder="Search incidents or dates..." oninput="applyFilters()">
+      </div>
+      <div class="sort-bar">
+        <span class="sort-label">Sort by</span>
+        <button class="sort-btn active" id="sort-date" onclick="setSort('date')">Date <span id="arr-date">↓</span></button>
+        <button class="sort-btn" id="sort-high" onclick="setSort('high')">Hottest <span id="arr-high">↓</span></button>
+        <button class="sort-btn" id="sort-low" onclick="setSort('low')">Coolest <span id="arr-low">↓</span></button>
+      </div>
+    </div>
+    <div class="filter-chips" id="chipZone"></div>
+    <div class="result-count" id="resultCount">Showing all 51 events</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:86px">Date</th>
+          <th style="width:52px">Time</th>
+          <th>Incident</th>
+          <th style="width:72px">High</th>
+          <th style="width:90px">Peak window</th>
+          <th style="width:66px">Low</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="no-results" id="noResults" style="display:none">No events match your filters.</div>
+    </div>
+  </div>
+
+  <div class="pane" id="pane-insights">
+    <div id="insights-pending" class="pending-note">
+      <strong>No weather data yet</strong>
+      Fetch temperatures first and then come back here. The charts will populate automatically once data is loaded.
+    </div>
+    <div id="insights-content" style="display:none">
+
+      <div class="chart-section">
+        <div class="chart-header">
+          <div class="chart-title">When rescues happen vs. how hot it was</div>
+          <div class="chart-sub">Each dot is one rescue call. The x-axis is the hour the call came in, the y-axis is how hot it got that day. The red dashed line is 95°F, a common threshold for dangerous heat conditions outdoors.</div>
+        </div>
+        <div class="chart-box" style="height:320px"><canvas id="scatterChart" role="img" aria-label="Scatter plot of rescue hour versus daily high temperature"></canvas></div>
+        <div class="threshold-row"><span class="threshold-line-sample"></span> 95°F danger threshold</div>
+        <div class="insight-card" id="scatter-insight"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="chart-section">
+        <div class="chart-header">
+          <div class="chart-title">Rescues by month</div>
+          <div class="chart-sub">Total rescue calls per calendar month across all years. The shaded zone covers June through September. This is where the data gets uncomfortable.</div>
+        </div>
+        <div class="chart-box" style="height:260px"><canvas id="monthChart" role="img" aria-label="Bar chart of rescues by month"></canvas></div>
+        <div class="insight-card blue" id="month-insight"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="chart-section">
+        <div class="chart-header">
+          <div class="chart-title">Temperature bands on rescue days</div>
+          <div class="chart-sub">How many rescues happened when it hit each temperature range. Orange bars are days at or above 95°F.</div>
+        </div>
+        <div class="chart-box" style="height:240px"><canvas id="histChart" role="img" aria-label="Histogram of daily high temperatures on rescue days"></canvas></div>
+        <div class="insight-card" id="hist-insight"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const MONTH_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const THRESHOLD=95;
+const RAW=[
+  {d:"5/31/2025",t:"12:40",inc:"Hiker on trail needing medical attention",mo:5,hr:12},
+  {d:"5/10/2025",t:"14:50",inc:"Multiple hikers on trail needing medical attention",mo:5,hr:14},
+  {d:"9/23/2024",t:"13:51",inc:"Hiker on trail needing medical attention",mo:9,hr:13},
+  {d:"9/20/2024",t:"19:54",inc:"Lost Hiker on the trail",mo:9,hr:19},
+  {d:"8/11/2024",t:"14:32",inc:"Hiker on trail needing medical attention",mo:8,hr:14},
+  {d:"6/29/2024",t:"11:09",inc:"Hiker on trail needing medical attention",mo:6,hr:11},
+  {d:"6/9/2024",t:"14:25",inc:"Hiker on trail needing medical attention",mo:6,hr:14},
+  {d:"9/16/2023",t:"15:43",inc:"Hiker on trail needing medical attention",mo:9,hr:15},
+  {d:"9/9/2023",t:"13:12",inc:"Hiker on trail needing medical attention",mo:9,hr:13},
+  {d:"8/19/2023",t:"14:49",inc:"Hiker on trail needing medical attention",mo:8,hr:14},
+  {d:"7/19/2023",t:"13:32",inc:"Hiker on trail needing medical attention",mo:7,hr:13},
+  {d:"5/13/2023",t:"18:17",inc:"Hiker on trail needing medical attention",mo:5,hr:18},
+  {d:"5/13/2023",t:"12:32",inc:"Hiker on trail needing medical attention",mo:5,hr:12},
+  {d:"4/23/2023",t:"14:52",inc:"Hiker on trail needing medical attention",mo:4,hr:14},
+  {d:"9/8/2022",t:"12:40",inc:"Hiker on trail needing medical attention",mo:9,hr:12},
+  {d:"1/31/2022",t:"13:06",inc:"Hiker on trail needing medical attention",mo:1,hr:13},
+  {d:"1/13/2022",t:"10:49",inc:"Hiker on trail needing medical attention",mo:1,hr:10},
+  {d:"8/15/2021",t:"12:25",inc:"Hiker on trail needing medical attention",mo:8,hr:12},
+  {d:"7/10/2021",t:"13:03",inc:"Multiple hikers on trail needing medical attention",mo:7,hr:13},
+  {d:"7/10/2021",t:"11:10",inc:"Hiker on trail needing medical attention",mo:7,hr:11},
+  {d:"5/15/2021",t:"20:31",inc:"Hiker on trail needing medical attention",mo:5,hr:20},
+  {d:"2/21/2021",t:"13:13",inc:"Hiker on trail needing medical attention",mo:2,hr:13},
+  {d:"11/21/2020",t:"14:36",inc:"Hiker on trail needing medical attention",mo:11,hr:14},
+  {d:"8/9/2020",t:"14:02",inc:"Hiker on trail needing medical attention",mo:8,hr:14},
+  {d:"7/31/2020",t:"11:28",inc:"Hiker on trail needing medical attention",mo:7,hr:11},
+  {d:"6/27/2020",t:"15:01",inc:"Hiker on trail needing medical attention",mo:6,hr:15},
+  {d:"5/25/2020",t:"12:32",inc:"Hiker on trail needing medical attention",mo:5,hr:12},
+  {d:"4/9/2020",t:"16:02",inc:"Hiker on trail with a broken leg",mo:4,hr:16},
+  {d:"9/22/2019",t:"17:45",inc:"Hiker on trail needing medical attention",mo:9,hr:17},
+  {d:"9/14/2019",t:"14:11",inc:"Hiker on trail needing medical attention",mo:9,hr:14},
+  {d:"8/24/2019",t:"10:14",inc:"Hiker on trail needing medical attention",mo:8,hr:10},
+  {d:"8/22/2019",t:"14:20",inc:"Hiker on trail needing medical attention",mo:8,hr:14},
+  {d:"6/24/2019",t:"14:20",inc:"Hiker on trail needing medical attention",mo:6,hr:14},
+  {d:"6/8/2019",t:"14:57",inc:"Hiker on trail needing medical attention",mo:6,hr:14},
+  {d:"6/1/2019",t:"13:00",inc:"Hiker on trail needing medical attention",mo:6,hr:13},
+  {d:"9/23/2018",t:"13:15",inc:"Hiker on trail needing medical attention",mo:9,hr:13},
+  {d:"6/29/2018",t:"15:22",inc:"Hiker on trail needing medical attention",mo:6,hr:15},
+  {d:"6/2/2018",t:"12:25",inc:"Hiker on trail needing medical attention",mo:6,hr:12},
+  {d:"5/27/2018",t:"14:39",inc:"Hiker on trail needing medical attention",mo:5,hr:14},
+  {d:"5/27/2018",t:"13:17",inc:"Hiker on trail needing medical attention",mo:5,hr:13},
+  {d:"8/20/2017",t:"14:43",inc:"Hiker on trail needing medical attention",mo:8,hr:14},
+  {d:"7/23/2017",t:"15:24",inc:"Lost Hiker on the trail",mo:7,hr:15},
+  {d:"7/3/2017",t:"12:45",inc:"Hiker on trail needing medical attention",mo:7,hr:12},
+  {d:"6/17/2017",t:"10:30",inc:"Hiker on trail needing medical attention",mo:6,hr:10},
+  {d:"6/4/2017",t:"14:59",inc:"Hiker on trail needing medical attention",mo:6,hr:14},
+  {d:"5/21/2017",t:"13:00",inc:"Hiker on trail needing medical attention",mo:5,hr:13},
+  {d:"4/5/2026",t:"10:31",inc:"Hiker on trail needing medical attention",mo:4,hr:10},
+  {d:"10/8/2025",t:"20:03",inc:"Hiker on trail needing medical attention",mo:10,hr:20},
+  {d:"7/30/2025",t:"12:56",inc:"Hiker on trail needing medical attention",mo:7,hr:12},
+  {d:"7/19/2025",t:"14:40",inc:"Hiker on trail needing medical attention",mo:7,hr:14},
+  {d:"6/4/2025",t:"14:30",inc:"Hiker on trail needing medical attention",mo:6,hr:14}
+];
+
+const rows=RAW.map(r=>({...r,high:null,low:null,status:'pending'}));
+let sortKey='date',sortAsc=false,activeChip='All',searchVal='';
+let scatterChart=null,monthChart=null,histChart=null;
+
+function toISO(ds){const[m,d,y]=ds.split('/');return`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`}
+function toTS(ds){const[m,d,y]=ds.split('/');return new Date(+y,+m-1,+d).getTime()}
+function peakWindow(mo){if(mo>=6&&mo<=9)return'2:00 to 5:00 PM';if(mo>=4&&mo<=5)return'1:00 to 3:00 PM';if(mo>=10&&mo<=11)return'12:00 to 2:00 PM';return'11 AM to 1 PM'}
+function incClass(inc){const l=inc.toLowerCase();if(l.includes('multiple'))return'inc-multiple';if(l.includes('lost'))return'inc-lost';if(l.includes('broken')||l.includes('injur'))return'inc-injury';if(l.includes('medical'))return'inc-medical';return'inc-other'}
+function getUniqInc(){return['All',...Array.from(new Set(rows.map(r=>r.inc))).sort()]}
+
+function buildChips(){
+  const z=document.getElementById('chipZone');z.innerHTML='';
+  getUniqInc().forEach(label=>{
+    const el=document.createElement('span');
+    el.className='chip'+(label===activeChip?' active':'');
+    el.textContent=label==='All'?'All incident types':label;
+    el.onclick=()=>{activeChip=label;buildChips();applyFilters()};
+    z.appendChild(el);
+  });
+}
+
+function setSort(key){
+  if(sortKey===key){sortAsc=!sortAsc}else{sortKey=key;sortAsc=false}
+  ['date','high','low'].forEach(k=>{
+    document.getElementById('sort-'+k).classList.toggle('active',k===sortKey);
+    document.getElementById('arr-'+k).textContent=k===sortKey?(sortAsc?'↑':'↓'):'↓';
+  });
+  applyFilters();
+}
+
+function getFiltered(){
+  let out=rows.filter(r=>{
+    const mc=activeChip==='All'||r.inc===activeChip;
+    const ms=!searchVal||r.inc.toLowerCase().includes(searchVal)||r.d.includes(searchVal);
+    return mc&&ms;
+  });
+  out.sort((a,b)=>{
+    let av,bv;
+    if(sortKey==='date'){av=toTS(a.d);bv=toTS(b.d)}
+    else if(sortKey==='high'){av=a.high??-999;bv=b.high??-999}
+    else{av=a.low??-999;bv=b.low??-999}
+    return sortAsc?av-bv:bv-av;
+  });
+  return out;
+}
+
+function updateStats(filtered){
+  const allDone=rows.filter(r=>r.status==='done');
+  document.getElementById('s-total').textContent=rows.length;
+  document.getElementById('s-showing').textContent=filtered.length;
+  if(allDone.length){
+    document.getElementById('s-avghigh').textContent=Math.round(allDone.reduce((s,r)=>s+r.high,0)/allDone.length)+'°';
+    document.getElementById('s-maxhigh').textContent=Math.max(...allDone.map(r=>r.high))+'°';
+    document.getElementById('s-avglow').textContent=Math.round(allDone.reduce((s,r)=>s+r.low,0)/allDone.length)+'°';
+    const above=allDone.filter(r=>r.high>=THRESHOLD).length;
+    document.getElementById('s-above95').textContent=above+' / '+allDone.length;
+  }
+}
+
+function applyFilters(){
+  searchVal=document.getElementById('searchBox').value.toLowerCase().trim();
+  const filtered=getFiltered();
+  updateStats(filtered);
+  document.getElementById('resultCount').textContent=
+    filtered.length===rows.length?`All ${rows.length} events`:`${filtered.length} of ${rows.length} events`;
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+  document.getElementById('noResults').style.display=filtered.length?'none':'block';
+  filtered.forEach(r=>{
+    const tr=document.createElement('tr');
+    let tc;
+    if(r.status==='pending')tc=`<td class="pend">--</td><td class="pend">--</td><td class="pend">--</td>`;
+    else if(r.status==='loading')tc=`<td class="pend">loading...</td><td></td><td></td>`;
+    else if(r.status==='error')tc=`<td class="err" colspan="3">No data found</td>`;
+    else tc=`<td class="temp-high">${r.high}°F</td><td class="peak-val">${peakWindow(r.mo)}</td><td class="temp-low">${r.low}°F</td>`;
+    tr.innerHTML=`<td class="date-cell">${r.d}</td><td class="time-cell">${r.t}</td><td><span class="inc-badge ${incClass(r.inc)}">${r.inc}</span></td>${tc}`;
+    tbody.appendChild(tr);
+  });
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['table','insights'][i]===name));
+  document.getElementById('pane-table').classList.toggle('active',name==='table');
+  document.getElementById('pane-insights').classList.toggle('active',name==='insights');
+  if(name==='insights'){
+    const done=rows.filter(r=>r.status==='done');
+    if(done.length){
+      document.getElementById('insights-pending').style.display='none';
+      document.getElementById('insights-content').style.display='block';
+      buildCharts();
+    }
+  }
+}
+
+function buildCharts(){
+  const done=rows.filter(r=>r.status==='done');
+  if(!done.length)return;
+  if(scatterChart){scatterChart.destroy();scatterChart=null}
+  if(monthChart){monthChart.destroy();monthChart=null}
+  if(histChart){histChart.destroy();histChart=null}
+
+  const above=done.filter(r=>r.high>=THRESHOLD);
+  const below=done.filter(r=>r.high<THRESHOLD);
+
+  scatterChart=new Chart(document.getElementById('scatterChart'),{
+    type:'scatter',
+    data:{datasets:[
+      {label:`At or above ${THRESHOLD}°F (${above.length})`,data:above.map(r=>({x:r.hr,y:r.high,d:r.d,inc:r.inc})),backgroundColor:'rgba(224,92,42,0.8)',pointRadius:7,pointHoverRadius:9},
+      {label:`Below ${THRESHOLD}°F (${below.length})`,data:below.map(r=>({x:r.hr,y:r.high,d:r.d,inc:r.inc})),backgroundColor:'rgba(59,130,246,0.6)',pointRadius:7,pointHoverRadius:9}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},boxWidth:10,padding:14,color:'#666'}},
+        tooltip:{callbacks:{label(ctx){const p=ctx.raw;const ampm=p.x>=12?'PM':'AM';const h=p.x>12?p.x-12:p.x===0?12:p.x;return[`${p.d} at ${h}:00 ${ampm}`,`High: ${p.y}°F`,p.inc]}},bodyFont:{family:'Inter',size:11},titleDisplay:false}
+      },
+      scales:{
+        x:{title:{display:true,text:'Hour rescue was called',font:{family:'Inter',size:11},color:'#aaa'},min:6,max:22,ticks:{stepSize:2,callback:v=>{const ampm=v>=12?'PM':'AM';const h=v>12?v-12:v===0?12:v;return`${h}${ampm}`},font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}},
+        y:{title:{display:true,text:'Daily high temp (°F)',font:{family:'Inter',size:11},color:'#aaa'},min:40,max:120,ticks:{callback:v=>v+'°',font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}
+      }
+    },
+    plugins:[{id:'tl',afterDraw(chart){const{ctx,chartArea,scales}=chart;const y=scales.y.getPixelForValue(THRESHOLD);ctx.save();ctx.setLineDash([6,4]);ctx.strokeStyle='#ef4444';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(chartArea.left,y);ctx.lineTo(chartArea.right,y);ctx.stroke();ctx.restore()}}]
+  });
+
+  const pct=Math.round(above.length/done.length*100);
+  const peakHrs=above.filter(r=>r.hr>=11&&r.hr<=16).length;
+  document.getElementById('scatter-insight').innerHTML=
+    `<strong>${pct}% of rescues</strong> (${above.length} out of ${done.length} events with data) happened on days that hit ${THRESHOLD}°F or hotter. Of those, <strong>${peakHrs} calls came in between 11 AM and 4 PM</strong>, right when the heat is at its worst.`;
+
+  const mc=Array(12).fill(0);
+  rows.forEach(r=>mc[r.mo-1]++);
+  const summerCount=mc.slice(5,9).reduce((a,b)=>a+b,0);
+
+  monthChart=new Chart(document.getElementById('monthChart'),{
+    type:'bar',
+    data:{labels:MONTH_NAMES,datasets:[{label:'Rescues',data:mc,backgroundColor:mc.map((_,i)=>i>=5&&i<=8?'rgba(224,92,42,0.85)':i>=3&&i<=4?'rgba(251,191,36,0.65)':'rgba(190,210,240,0.7)'),borderRadius:6,borderSkipped:false}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'Inter',size:11}}},
+      scales:{x:{ticks:{font:{family:'Inter',size:11},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
+    },
+    plugins:[{id:'shade',afterDraw(chart){const{ctx,chartArea,scales}=chart;ctx.save();ctx.fillStyle='rgba(224,92,42,0.05)';const x1=scales.x.getPixelForValue(4.5);const x2=scales.x.getPixelForValue(8.5);ctx.fillRect(x1,chartArea.top,x2-x1,chartArea.bottom-chartArea.top);ctx.restore()}}]
+  });
+
+  document.getElementById('month-insight').innerHTML=
+    `<strong>${summerCount} out of ${rows.length} total rescues</strong> (${Math.round(summerCount/rows.length*100)}%) happened in June, July, August, or September. That is not a coincidence.`;
+
+  const bands=[{l:'Under 60°',min:0,max:60},{l:'60 to 69°',min:60,max:70},{l:'70 to 79°',min:70,max:80},{l:'80 to 89°',min:80,max:90},{l:'90 to 94°',min:90,max:95},{l:'95 to 99°',min:95,max:100},{l:'100 to 109°',min:100,max:110},{l:'110° or above',min:110,max:999}];
+  const hc=bands.map(b=>done.filter(r=>r.high>=b.min&&r.high<b.max).length);
+
+  histChart=new Chart(document.getElementById('histChart'),{
+    type:'bar',
+    data:{labels:bands.map(b=>b.l),datasets:[{label:'Rescues',data:hc,backgroundColor:bands.map(b=>b.min>=THRESHOLD?'rgba(224,92,42,0.85)':'rgba(190,210,240,0.7)'),borderRadius:6,borderSkipped:false}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} rescue${ctx.parsed.y!==1?'s':''}`},bodyFont:{family:'Inter',size:11}}},
+      scales:{x:{ticks:{font:{family:'Inter',size:10},color:'#aaa'},grid:{display:false}},y:{ticks:{stepSize:1,font:{family:'Inter',size:10},color:'#bbb'},grid:{color:'rgba(0,0,0,0.03)'}}}
+    }
+  });
+
+  const aboveHist=hc.slice(5).reduce((a,b)=>a+b,0);
+  document.getElementById('hist-insight').innerHTML=
+    `<strong>${aboveHist} out of ${done.length} rescues</strong> happened on days that reached 95°F or hotter. The orange bars tell the story pretty clearly.`;
+}
+
+async function fetchWeather(row){
+  const iso=toISO(row.d);
+  const url=`https://archive-api.open-meteo.com/v1/archive?latitude=38.52&longitude=-122.11&start_date=${iso}&end_date=${iso}&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles`;
+  const res=await fetch(url);
+  if(!res.ok)throw new Error('bad response');
+  const json=await res.json();
+  if(!json.daily?.temperature_2m_max)throw new Error('no data');
+  row.high=Math.round(json.daily.temperature_2m_max[0]);
+  row.low=Math.round(json.daily.temperature_2m_min[0]);
+}
+
+let running=false;
+async function startFetch(){
+  if(running)return;
+  running=true;
+  document.getElementById('fetchBtn').disabled=true;
+  document.getElementById('exportBtn').disabled=true;
+  const statusEl=document.getElementById('statusTxt');
+  const bar=document.getElementById('bar');
+  for(let i=0;i<rows.length;i++){
+    rows[i].status='loading';applyFilters();
+    statusEl.textContent=`Fetching ${i+1} of ${rows.length}: ${rows[i].d}...`;
+    bar.style.width=Math.round(i/rows.length*100)+'%';
+    try{await fetchWeather(rows[i]);rows[i].status='done'}
+    catch(e){rows[i].status='error'}
+    await new Promise(res=>setTimeout(res,120));
+  }
+  bar.style.width='100%';
+  const good=rows.filter(r=>r.status==='done').length;
+  statusEl.textContent=`Done. ${good} of ${rows.length} events loaded. Check the Insights tab.`;
+  running=false;
+  document.getElementById('fetchBtn').disabled=false;
+  document.getElementById('exportBtn').disabled=false;
+  applyFilters();
+}
+
+function exportCSV(){
+  const lines=['Date,Time,Incident,High_F,Peak_Window,Low_F'];
+  getFiltered().forEach(r=>{
+    lines.push(`${r.d},${r.t},"${r.inc}",${r.status==='done'?r.high:''},"${r.status==='done'?peakWindow(r.mo):''}",${r.status==='done'?r.low:''}`);
+  });
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='stebbins_rescues_weather.csv';a.click();
+}
+
+buildChips();
+applyFilters();
+</script>
